@@ -1,0 +1,5 @@
+An experiment in using python to check C source code for errors.
+
+Uses pycparser to generate ast from C source code and python-constraint as the constraint solver.
+
+pre-alpha.
