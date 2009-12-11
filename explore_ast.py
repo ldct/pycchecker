@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys
+import sys, time
 from pycparser import c_parser, c_ast, parse_file
 from generate_traces import extract_globals, scan_statement, possible_error_traces
 from expand_trace import expand_trace, expanded_trace
@@ -29,4 +29,6 @@ for trace in possible_error_traces:
     print
     #print expanded_trace
     print
+    t1 = time.time()
     solve_trace(expanded_trace)
+    print "took " , time.time() - t1 , " to run"

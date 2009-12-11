@@ -8,7 +8,7 @@ class Condition:
         self.cond = cond
         self.istrue = istrue
     def __repr__(self):
-        return "custom" + str(self.cond) + "==" + str(self.istrue)
+        return str(self.cond) + "==" + str(self.istrue)
     def pretty(self):
         if isinstance(self.cond, c_ast.UnaryOp) and isinstance(self.cond.expr, c_ast.ID):
             print self.cond.op, self.cond.expr.name, "==", self.istrue
@@ -17,7 +17,7 @@ class Condition:
     def show(self):
         self.cond.show()
         print self.istrue
-    def show_affected_vars(self):
+    def show_affected_vars(self):   #not really tested yet
         id_list = []
         def _recurse_id(i): 
             if isinstance(i, c_ast.ID):
@@ -45,6 +45,13 @@ class Trace(list):
         for i in self.end_cond:
             print i
 
+def make_ptr_null_cond(name):
+    null_const = c_ast.Constant('int', 0, 0)    #null
+    id_fr_name = c_ast.ID(name, 0)
+    binary_op = c_ast.BinaryOp('==', id_fr_name, null_const)
+    
+    return binary_op
+
 expanded_trace = Trace()
 
 def e_include(i):
@@ -56,6 +63,7 @@ def e_include_assert(cond, istrue):
     expanded_trace.append(Condition(cond, istrue))
     
 def e_include_end(cond, istrue):
+    print "eie", cond, istrue
     expanded_trace.end_condition(Condition(cond, istrue))
 
 def expand_trace(trace):    #trace is a list
@@ -72,7 +80,10 @@ def expand_first(obj_list):    #expands first item of obj_list
     elif isinstance(obj, c_ast.Compound):
         handle_compound_until(obj_list[0:], obj_list[1])
     elif isinstance(obj, c_ast.Assignment): #we are expanding an assignment => an assignment is in the obj_list => this is the dangerous one in question, since normally obj_list should only contain branch points (and loops in future).
-        e_include_end(obj_list[-2], obj_list[-1])
+        
+        #bug here should be e_include_end("obj_list[-2] == obj_list[s1])"
+        #e_include_end(obj_list[-2], obj_list[-1], True)
+        e_include_end(make_ptr_null_cond(obj_list[-2].name), True)
     elif isinstance(obj, c_ast.ID):
         assert(len(obj_list) == 2)
         obj_list[0].show()

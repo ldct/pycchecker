@@ -28,8 +28,7 @@ def harvest_affected(assign):
         yield a.name
 
 def solve_trace(trace):
-    
-    var1 = trace.end_cond[0].cond.name
+    var1 = trace.end_cond[0].cond.left.name    #huh? why?
     add_ptr_var(var1)
     solve_trace_recurse(trace)
 
@@ -40,6 +39,7 @@ def solve_trace_recurse(trace):
         if isinstance(element, c_ast.Assignment):           #assignment: just add to n_b_s to pass to wp.py
             assert(isinstance(element.lvalue, c_ast.ID))
             if (element.lvalue.name in affected_vars):
+                element.show()
                 no_branch_section.append(element)                
                 print "assignment to affected var, should harvest more"
                 for affected in harvest_affected(element):
@@ -79,4 +79,4 @@ def solve_trace_recurse(trace):
     print 'tec', trace.end_cond
     print 'var', affected_vars
     
-    wp.solve_no_branch_postcond(no_branch_section, trace.end_cond)
+    wp.solve_no_branch_postcond(no_branch_section, trace.end_cond, affected_vars)
