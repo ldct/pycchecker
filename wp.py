@@ -20,8 +20,8 @@ ast = parser.parse(s)
 #ast.show()
 
 def solve_no_branch_postcond(assign_list, end_cond):
-    if len(assign_list) == 0:
+    if len(assign_list) == 0:        
         return end_cond
     else:
-        print "not implemented yet"
-        return 42
+        print "not implemented: solving", assign_list
+        return end_cond #wrong

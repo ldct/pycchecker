@@ -10,10 +10,10 @@ def error(l):
 def extract_globals(decl):
     for child in decl.children():
         if isinstance(child, c_ast.TypeDecl):
-            print "global variable: '%s' is %s" % (child.declname, child.type.names[0])
+            #print "global variable: '%s' is %s" % (child.declname, child.type.names[0])
             return child.declname
         elif isinstance(child, c_ast.PtrDecl):
-            print "global pointer: '%s' points to %s" %(decl.name, decl.type.type.type.names[0])
+            #print "global pointer: '%s' points to %s" %(decl.name, decl.type.type.type.names[0])
             return decl.name
 
 def handle_unaryop(op, hist):
@@ -58,24 +58,26 @@ def handle_cond(cond, hist):
         handle_binaryop(cond, hist)
 
 def handle_assignment(stmt, hist):
-    print "\n%s" % stmt.coord
+    #print "\n%s" % stmt.coord
     if isinstance(stmt.rvalue, c_ast.UnaryOp):
         handle_unaryop(stmt.rvalue, hist + [stmt.rvalue])
     else:
-        print "read/deref", stmt.rvalue
+        #print "read/deref", stmt.rvalue
         print hist
         
     lv = stmt.lvalue
     if isinstance(lv, c_ast.ArrayRef):
-        print "write to array", lv.name.name
-        print "requires 0 < '%s' < size(%s)" %(lv.subscript.name, lv.name.name)
+        pass
+        #print "write to array", lv.name.name
+        #print "requires 0 < '%s' < size(%s)" %(lv.subscript.name, lv.name.name)
     elif isinstance(lv, c_ast.ID):
-        print "write to '%s'" % lv.name    
+        pass
+        #print "write to '%s'" % lv.name    
         
 def handle_function(stmt):
-    print "\n%s" % stmt.coord
+    #print "\n%s" % stmt.coord
     if (stmt.name.name == "printf"):
-        print "call printf"
+        #print "call printf"
         for expr in stmt.args.exprs[1:]:
             handle_expr(expr)
         
@@ -83,8 +85,8 @@ def handle_expr(expr, hist):
     if isinstance(expr, c_ast.Constant):
         pass
     elif isinstance(expr, c_ast.ID):
-        print "read '%s'" % expr.name
-        print "\trequires '%s' defined" % expr.name
+        #print "read '%s'" % expr.name
+        #print "\trequires '%s' defined" % expr.name
         print hist
     elif isinstance(expr, c_ast.UnaryOp):
         handle_unaryop(expr, hist)
@@ -92,11 +94,12 @@ def handle_expr(expr, hist):
         handle_binaryop(expr, hist)
             
 def handle_returns(stmt, hist):
-    print "%s: return" % stmt.coord
+    #print "%s: return" % stmt.coord
     handle_expr(stmt.expr, hist + [stmt.expr])
     if isinstance(stmt.expr, c_ast.Constant):
         pass
     elif isinstance(stmt.expr, c_ast.ID):
-        print "\n%s" % stmt.coord
-        print "return '%s'" % stmt.expr.name
-        print "\trequires '%s' initialized or global pointer (not local)" % stmt.expr.name
+        pass
+        #print "\n%s" % stmt.coord
+        #print "return '%s'" % stmt.expr.name
+        #print "\trequires '%s' initialized or global pointer (not local)" % stmt.expr.name

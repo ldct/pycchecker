@@ -17,6 +17,16 @@ class Condition:
     def show(self):
         self.cond.show()
         print self.istrue
+    def show_affected_vars(self):
+        id_list = []
+        def _recurse_id(i): 
+            if isinstance(i, c_ast.ID):
+                id_list.append(i)
+            else:
+                for j in i.children():
+                    _recurse_id(j)
+        _recurse_id(self.cond)
+        return id_list
         
 class Trace(list):
     def __init__(self):
@@ -26,7 +36,11 @@ class Trace(list):
         self.end_cond.append(cond)
     def show(self):
         for i in self:
-            print i
+            try:
+                #i.show()
+                print i
+            except:
+                print i
         print "With end cond"
         for i in self.end_cond:
             print i

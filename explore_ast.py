@@ -16,7 +16,7 @@ for obj in ast.ext:
         global_decl = extract_globals(obj)
         global_vars.append(global_decl)
     elif isinstance(obj, c_ast.FuncDef):
-        print "\n\nscanning function '%s'" % obj.decl.name
+        #print "\n\nscanning function '%s'" % obj.decl.name
         for stmt in obj.body.stmts:
             scan_statement(stmt, [obj] + [stmt])
 
